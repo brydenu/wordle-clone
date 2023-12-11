@@ -1,113 +1,148 @@
-import Image from 'next/image'
+"use client";
+
+import { useState, useEffect } from "react";
+import Board from "@/components/Board";
+import ClickableKeyboard from "@/components/ClickableKeyboard";
+import chooseRandomWord from "@/utils/chooseRandomWord";
+import verifyRealWord from "@/utils/verifyRealWord";
+import words from "@/data/words.json";
 
 export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+    const [word, setWord] = useState([]);
+    const [guessLimit, setGuessLimit] = useState(6);
+    const [wordsList, setWordsList] = useState([]);
+    const [wordLength, setWordLength] = useState(5);
+    const [currentGuessNum, setCurrentGuessNum] = useState(1);
+    const [currentChars, setCurrentChars] = useState([]);
+    const [isRealWord, setIsRealWord] = useState(false);
+
+    const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    useEffect(() => {
+        if (wordLength === 5) {
+            setWordsList(words.five);
+        } else if (wordLength === 6) {
+            setWordsList(words.six);
+        }
+    }, [wordLength]);
+
+    useEffect(() => {
+        if (wordsList) {
+            const randomWord = chooseRandomWord(wordsList);
+            if (randomWord) {
+                const wordArr = randomWord.split("");
+                setWord(wordArr);
+            }
+        }
+    }, [wordsList]);
+
+    useEffect(() => {
+        const checkWord = async () => {
+            const charArr = [];
+            currentChars.map((c) => {
+                charArr.push(c.letter);
+            });
+            const joined = charArr.join("");
+            const isReal = await verifyRealWord(joined);
+            console.log("isreal", isReal);
+            setIsRealWord(isReal);
+        };
+        checkWord();
+    }, [currentChars]);
+
+    const checkOkayChar = (char, referenceWord, idx) => {
+        const charIndex = referenceWord.indexOf(char);
+        if (charIndex !== -1) {
+            referenceWord[charIndex] = "";
+            return 1;
+        }
+        return 0;
+    };
+
+    const checkPerfectChar = (char, referenceWord, idx) => {
+        if (referenceWord[idx] === char) {
+            referenceWord[idx] = "";
+            return 2;
+        }
+        return null;
+    };
+
+    const checkRow = (attempt) => {
+        const checkedChars = attempt.map((c) => c.letter);
+        const referenceWord = [...word];
+        for (let i = 0; i < attempt.length; i++) {
+            const isPerfect = checkPerfectChar(attempt[i], referenceWord, i);
+            if (isPerfect) {
+                checkedChars[i] = {
+                    letter: attempt[i].letter,
+                    correctness: isPerfect,
+                };
+            }
+        }
+        for (let i = 0; i < checkedChars.length; i++) {
+            if (typeof checkedChars[i] !== "object") {
+                const isOkay = checkOkayChar(checkedChars[i], referenceWord, i);
+                checkedChars[i] = {
+                    letter: attempt[i].letter,
+                    correctness: isOkay,
+                };
+            }
+        }
+        setCurrentGuessNum((current) => current + 1);
+        return checkedChars;
+    };
+
+    const updateChars = (typed) => {
+        const typedChar = typed.toUpperCase();
+        console.log("typedChar", typedChar);
+        if (
+            ALPHABET.split("").includes(typedChar) &&
+            currentChars.length < wordLength
+        ) {
+            console.log("got it");
+            const newChars = [
+                ...currentChars,
+                { letter: typedChar, correctness: null },
+            ];
+            setCurrentChars(newChars);
+            return newChars;
+        } else if (typedChar === "BACKSPACE" && currentChars.length > 0) {
+            console.log("backspace");
+            const newChars = [...currentChars];
+            console.log("currentNewChars", newChars);
+            newChars.pop();
+            setCurrentChars(newChars);
+            return newChars;
+        } else if (
+            typedChar === "ENTER" &&
+            currentChars.length === wordLength &&
+            isRealWord
+        ) {
+            const submittedChars = checkRow(currentChars);
+            console.log("submittedChars", submittedChars);
+            setCurrentChars([]);
+            return submittedChars;
+        }
+        return null;
+    };
+
+    // console.log("word", word);
+    // console.log("currentGuessNumber", currentGuessNum);
+
+    return (
+        <main className="flex min-h-screen flex-col items-center justify-between p-24">
+            {/* <h1>Wordle</h1>
+            <hr /> */}
+
+            <Board
+                guessLimit={guessLimit}
+                wordLength={wordLength}
+                currentGuessNum={currentGuessNum}
+                updateChars={updateChars}
+                currentChars={currentChars}
+                checkRow={checkRow}
             />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+            <ClickableKeyboard updateChars={updateChars} />
+        </main>
+    );
 }
