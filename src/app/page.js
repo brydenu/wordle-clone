@@ -67,9 +67,26 @@ export default function Home() {
         return null;
     };
 
+    const checkUsedSameWord = (chars) => {
+        for (let prevChars of previousChars) {
+            for (let i=0;i<chars.length;i++) {
+                if (chars[i].letter !== prevChars[i].letter) {
+                    break;
+                } else if (i === chars.length-1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     const checkRow = (attempt) => {
         const checkedChars = attempt.map((c) => c.letter);
         const referenceWord = [...word];
+        const isSameWord = checkUsedSameWord(checkedChars);
+        if (isSameWord) {
+            return;
+        }
         for (let i = 0; i < attempt.length; i++) {
             const isPerfect = checkPerfectChar(attempt[i], referenceWord, i);
             if (isPerfect) {
