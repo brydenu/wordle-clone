@@ -1,32 +1,52 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-export default function Tile({ char = { letter: "", correctness: -1 } }) {
-    let classes = "border border-gray bg-white/0";
+export default function Tile({
+    char = { letter: "", correctness: -1 },
+    currentRow,
+}) {
+    const [classes, setClasses] = useState(
+        "border-[#D3D6DA] border-2 bg-white/0 text-black"
+    );
+    // console.log("char", char);
     useEffect(() => {
-        if (typeof char === "object") {
-            if (char.correctness === 2) {
-                classes = "bg-green-700";
-            } else if (char.correctness === 1) {
-                classes = "bg-yellow-700";
-            } else if (char.correctness === 0) {
-                classes = "bg-gray-700";
-            } else if (char.correctness === -1) {
-                classes = "border border-gray bg-white/0";
+        if (char.correctness === 2) {
+            // console.log("correctness correct");
+            setClasses("bg-[#6aaa64] text-white");
+        } else if (char.correctness === 1) {
+            console.log("correctness partial");
+
+            setClasses("bg-[#c9b458]");
+        } else if (char.correctness === 0) {
+            // console.log("correctness incorrect");
+            setClasses("bg-gray-700 text-white");
+        } else if (char.correctness === -1 || !char.correctness) {
+            if (char.letter) {
+                setClasses("border-[#878a8c] border-2 bg-white/0 text-black");
+            } else {
+                setClasses("border-[#D3D6DA] border-2 bg-white/0 text-black");
             }
-        } else {
-            classes = "border border-gray bg-white/0";
         }
     }, [char]);
+
+    console.log("currentRow?", currentRow);
+
+    // useEffect(() => {
+    //     console.log("char changed");
+    // }, [char]);
+
+    // useEffect(() => {
+    //     console.log("currentRow changed");
+    // }, [currentRow]);
 
     // console.log("char", char);
 
     return (
         <div
-            className={`wordle-tile ${classes} w-[48px] h-[48px] min-w-max min-h-full flex justify-center align-middle items-center`}
+            className={`wordle-tile ${classes} w-[52px] h-[52px] min-w-max min-h-full flex justify-center align-middle items-center`}
         >
-            <p className="font-semibold text-3xl text-center justify-center text-white">
+            <p className={`font-bold text-3xl text-center justify-center`}>
                 {char.letter || ""}
             </p>
         </div>

@@ -10,6 +10,7 @@ export default function Board({
     checkRow,
     updateChars,
     currentChars,
+    setSubmittingByUiKeyboard,
 }) {
     // const board = generateBoard(wordLength, guessLimit);
 
@@ -27,7 +28,7 @@ export default function Board({
     return (
         <div
             id="wordle-board"
-            className="flex flex-col items-center w-full gap-2"
+            className="flex flex-col items-center w-full gap-[5px] p-[10px]"
         >
             {rows}
         </div>

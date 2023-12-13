@@ -9,7 +9,7 @@ import words from "@/data/words.json";
 
 export default function Home() {
     const [word, setWord] = useState([]);
-    const [guessLimit, setGuessLimit] = useState(6);
+    const [guessLimit, setGuessLimit] = useState(2);
     const [wordsList, setWordsList] = useState([]);
     const [wordLength, setWordLength] = useState(5);
     const [currentGuessNum, setCurrentGuessNum] = useState(1);
@@ -93,13 +93,12 @@ export default function Home() {
     };
 
     const updateChars = (typed) => {
-        const typedChar = typed.toUpperCase();
+        const typedChar = typed?.toUpperCase();
         console.log("typedChar", typedChar);
         if (
             ALPHABET.split("").includes(typedChar) &&
             currentChars.length < wordLength
         ) {
-            console.log("got it");
             const newChars = [
                 ...currentChars,
                 { letter: typedChar, correctness: null },
@@ -107,9 +106,7 @@ export default function Home() {
             setCurrentChars(newChars);
             return newChars;
         } else if (typedChar === "BACKSPACE" && currentChars.length > 0) {
-            console.log("backspace");
             const newChars = [...currentChars];
-            console.log("currentNewChars", newChars);
             newChars.pop();
             setCurrentChars(newChars);
             return newChars;
@@ -130,7 +127,7 @@ export default function Home() {
     // console.log("currentGuessNumber", currentGuessNum);
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-between p-24">
+        <main className="flex min-h-screen flex-col items-center p-24">
             {/* <h1>Wordle</h1>
             <hr /> */}
 
