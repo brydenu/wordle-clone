@@ -10,7 +10,7 @@ export default function Board({
     checkRow,
     updateChars,
     currentChars,
-    setSubmittingByUiKeyboard,
+    previousChars
 }) {
     // const board = generateBoard(wordLength, guessLimit);
 
@@ -23,6 +23,7 @@ export default function Board({
             key={`row-${index + 1}`}
             updateChars={updateChars}
             currentChars={currentChars}
+            previousChars={previousChars}
         />
     ));
     return (

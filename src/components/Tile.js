@@ -30,8 +30,6 @@ export default function Tile({
         }
     }, [char]);
 
-    console.log("currentRow?", currentRow);
-
     // useEffect(() => {
     //     console.log("char changed");
     // }, [char]);

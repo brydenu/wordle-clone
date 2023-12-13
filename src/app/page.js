@@ -14,6 +14,7 @@ export default function Home() {
     const [wordLength, setWordLength] = useState(5);
     const [currentGuessNum, setCurrentGuessNum] = useState(1);
     const [currentChars, setCurrentChars] = useState([]);
+    const [previousChars, setPreviousChars] = useState([]);
     const [isRealWord, setIsRealWord] = useState(false);
 
     const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -44,7 +45,6 @@ export default function Home() {
             });
             const joined = charArr.join("");
             const isReal = await verifyRealWord(joined);
-            console.log("isreal", isReal);
             setIsRealWord(isReal);
         };
         checkWord();
@@ -89,6 +89,7 @@ export default function Home() {
             }
         }
         setCurrentGuessNum((current) => current + 1);
+        console.log("checkedchars", checkedChars)
         return checkedChars;
     };
 
@@ -118,6 +119,7 @@ export default function Home() {
             const submittedChars = checkRow(currentChars);
             console.log("submittedChars", submittedChars);
             setCurrentChars([]);
+            setPreviousChars((prev) => ([...prev, submittedChars]));
             return submittedChars;
         }
         return null;
@@ -138,6 +140,7 @@ export default function Home() {
                 updateChars={updateChars}
                 currentChars={currentChars}
                 checkRow={checkRow}
+                previousChars={previousChars}
             />
             <ClickableKeyboard updateChars={updateChars} />
         </main>
