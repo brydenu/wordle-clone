@@ -53,8 +53,8 @@ export default function Home() {
 
     const addToPrevWords = (chars) => {
         const newWord = chars.map((c) => c.letter).join("");
-        setPreviousWords((prev) => ([...prev, newWord]));
-    }
+        setPreviousWords((prev) => [...prev, newWord]);
+    };
 
     const checkOkayChar = (char, referenceWord, idx) => {
         const charIndex = referenceWord.indexOf(char);
@@ -80,7 +80,7 @@ export default function Home() {
         }
         console.log("word not used");
         return false;
-    }
+    };
 
     const checkRow = (attempt) => {
         const checkedChars = attempt.map((c) => c.letter);
@@ -135,7 +135,7 @@ export default function Home() {
         ) {
             const submittedChars = checkRow(currentChars);
             setCurrentChars([]);
-            setPreviousChars((prev) => ([...prev, submittedChars]));
+            setPreviousChars((prev) => [...prev, submittedChars]);
             addToPrevWords(submittedChars);
             return submittedChars;
         }
@@ -148,9 +148,11 @@ export default function Home() {
 
     return (
         <main className="flex min-h-screen flex-col items-center pt-24">
-            <h1 className="text-3xl text-black font-bold font-mono pb-5">Wordle</h1>
+            <h1 className="text-3xl text-black font-bold font-mono pb-5">
+                Wordle
+            </h1>
 
-            <hr className="h-0.5 w-full pb-24" />
+            <hr className="h-0.5 w-full pb-5" />
 
             <Board
                 guessLimit={guessLimit}
