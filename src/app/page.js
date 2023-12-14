@@ -14,6 +14,7 @@ export default function Home() {
     const [wordLength, setWordLength] = useState(5);
     const [currentGuessNum, setCurrentGuessNum] = useState(1);
     const [currentChars, setCurrentChars] = useState([]);
+    const [previousWords, setPreviousWords] = useState([]);
     const [previousChars, setPreviousChars] = useState([]);
     const [isRealWord, setIsRealWord] = useState(false);
 
@@ -50,6 +51,11 @@ export default function Home() {
         checkWord();
     }, [currentChars]);
 
+    const addToPrevWords = (chars) => {
+        const newWord = chars.map((c) => c.letter).join("");
+        setPreviousWords((prev) => ([...prev, newWord]));
+    }
+
     const checkOkayChar = (char, referenceWord, idx) => {
         const charIndex = referenceWord.indexOf(char);
         if (charIndex !== -1) {
@@ -68,15 +74,11 @@ export default function Home() {
     };
 
     const checkUsedSameWord = (chars) => {
-        for (let prevChars of previousChars) {
-            for (let i=0;i<chars.length;i++) {
-                if (chars[i].letter !== prevChars[i].letter) {
-                    break;
-                } else if (i === chars.length-1) {
-                    return true;
-                }
-            }
+        const newWord = chars.join("");
+        if (previousWords.includes(newWord)) {
+            return true;
         }
+        console.log("word not used");
         return false;
     }
 
@@ -106,13 +108,11 @@ export default function Home() {
             }
         }
         setCurrentGuessNum((current) => current + 1);
-        console.log("checkedchars", checkedChars)
         return checkedChars;
     };
 
     const updateChars = (typed) => {
         const typedChar = typed?.toUpperCase();
-        console.log("typedChar", typedChar);
         if (
             ALPHABET.split("").includes(typedChar) &&
             currentChars.length < wordLength
@@ -134,9 +134,9 @@ export default function Home() {
             isRealWord
         ) {
             const submittedChars = checkRow(currentChars);
-            console.log("submittedChars", submittedChars);
             setCurrentChars([]);
             setPreviousChars((prev) => ([...prev, submittedChars]));
+            addToPrevWords(submittedChars);
             return submittedChars;
         }
         return null;
@@ -144,6 +144,7 @@ export default function Home() {
 
     // console.log("word", word);
     // console.log("currentGuessNumber", currentGuessNum);
+    console.log("previouswords", previousWords)
 
     return (
         <main className="flex min-h-screen flex-col items-center p-24">

@@ -53,7 +53,6 @@ export default function TileRow({
 
     useEffect(() => {
         if (rowNum !== currentGuessNum && previousChars.length) {
-            console.log("previousChars", previousChars)
             setChars(previousChars[rowNum - 1])
         }
     }, [previousChars])
