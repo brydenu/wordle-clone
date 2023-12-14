@@ -9,7 +9,7 @@ import words from "@/data/words.json";
 
 export default function Home() {
     const [word, setWord] = useState([]);
-    const [guessLimit, setGuessLimit] = useState(2);
+    const [guessLimit, setGuessLimit] = useState(6);
     const [wordsList, setWordsList] = useState([]);
     const [wordLength, setWordLength] = useState(5);
     const [currentGuessNum, setCurrentGuessNum] = useState(1);
@@ -144,12 +144,13 @@ export default function Home() {
 
     // console.log("word", word);
     // console.log("currentGuessNumber", currentGuessNum);
-    console.log("previouswords", previousWords)
+    // console.log("previouswords", previousWords)
 
     return (
-        <main className="flex min-h-screen flex-col items-center p-24">
-            {/* <h1>Wordle</h1>
-            <hr /> */}
+        <main className="flex min-h-screen flex-col items-center pt-24">
+            <h1 className="text-3xl text-black font-bold font-mono pb-5">Wordle</h1>
+
+            <hr className="h-0.5 w-full pb-24" />
 
             <Board
                 guessLimit={guessLimit}
