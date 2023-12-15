@@ -5,11 +5,12 @@ import { useEffect, useState } from "react";
 export default function Tile({
     char = { letter: "", correctness: -1 },
     currentRow,
+    rowNum,
 }) {
     const [classes, setClasses] = useState(
         "border-[#D3D6DA] border-2 bg-white/0 text-black"
     );
-    // console.log("char", char);
+    console.log("tile in row", rowNum);
     useEffect(() => {
         if (char.correctness === 2) {
             // console.log("correctness correct");
@@ -17,7 +18,7 @@ export default function Tile({
         } else if (char.correctness === 1) {
             console.log("correctness partial");
 
-            setClasses("bg-[#c9b458]");
+            setClasses("bg-[#c9b458] text-white");
         } else if (char.correctness === 0) {
             // console.log("correctness incorrect");
             setClasses("bg-gray-700 text-white");

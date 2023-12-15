@@ -112,6 +112,7 @@ export default function Home() {
     };
 
     const updateChars = (typed) => {
+        console.log("typed", typed);
         const typedChar = typed?.toUpperCase();
         if (
             ALPHABET.split("").includes(typedChar) &&
@@ -121,6 +122,7 @@ export default function Home() {
                 ...currentChars,
                 { letter: typedChar, correctness: null },
             ];
+            console.log("newChars", newChars);
             setCurrentChars(newChars);
             return newChars;
         } else if (typedChar === "BACKSPACE" && currentChars.length > 0) {
@@ -134,6 +136,7 @@ export default function Home() {
             isRealWord
         ) {
             const submittedChars = checkRow(currentChars);
+            console.log("submittedChars", submittedChars);
             setCurrentChars([]);
             setPreviousChars((prev) => [...prev, submittedChars]);
             addToPrevWords(submittedChars);
@@ -144,7 +147,7 @@ export default function Home() {
 
     // console.log("word", word);
     // console.log("currentGuessNumber", currentGuessNum);
-    // console.log("previouswords", previousWords)
+    console.log("previouswords", previousWords);
 
     return (
         <main className="flex min-h-screen flex-col items-center pt-24">

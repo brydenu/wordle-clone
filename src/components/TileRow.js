@@ -10,7 +10,7 @@ export default function TileRow({
     currentGuessNum,
     updateChars,
     currentChars,
-    previousChars
+    previousChars,
 }) {
     const [chars, setChars] = useState([]);
     const [submitted, setSubmitted] = useState([]);
@@ -53,18 +53,19 @@ export default function TileRow({
 
     useEffect(() => {
         if (rowNum !== currentGuessNum && previousChars.length) {
-            setChars(previousChars[rowNum - 1])
+            setChars(previousChars[rowNum - 1]);
         }
-    }, [previousChars])
+    }, [previousChars]);
 
     // console.log("submitted", submitted);
-    // console.log(`row ${rowNum} chars`, chars);
-    // console.log(`row ${rowNum} submitted`, submitted);
+    console.log(`row ${rowNum} chars`, chars);
+    console.log(`row ${rowNum} submitted`, submitted);
     const tiles = Array.from({ length: wordLength }, (_, index) => (
         <Tile
             tileNum={index + 1}
             key={`tile-${rowNum}-${index + 1}`}
-            char={chars[index] ? chars[index] : { letter: "", correctness: -1 }}
+            char={!!chars ? chars[index] : { letter: "", correctness: -1 }}
+            rowNum={rowNum}
             currentRow={rowNum === currentGuessNum}
         />
     ));
