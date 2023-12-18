@@ -17,6 +17,11 @@ export default function Home() {
     const [previousWords, setPreviousWords] = useState([]);
     const [previousChars, setPreviousChars] = useState([]);
     const [isRealWord, setIsRealWord] = useState(false);
+    const [guessedChars, setGuessedChars] = useState({
+        correct: [],
+        partial: [],
+        incorrect: [],
+    });
 
     const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -66,7 +71,7 @@ export default function Home() {
     };
 
     const checkPerfectChar = (char, referenceWord, idx) => {
-        if (referenceWord[idx] === char) {
+        if (referenceWord[idx] === char.letter) {
             referenceWord[idx] = "";
             return 2;
         }
@@ -82,6 +87,30 @@ export default function Home() {
         return false;
     };
 
+    const addGuessedChars = (chars) => {
+        const newGuessed = JSON.parse(JSON.stringify(guessedChars));
+        for (let char of chars) {
+            if (
+                guessedChars.correct.includes(char.letter) ||
+                guessedChars.partial.includes(char.letter) ||
+                guessedChars.incorrect.includes(char.letter)
+            ) {
+                continue;
+            }
+            if (char.correctness === 2) {
+                const newCorrect = [...newGuessed.correct, char.letter];
+                newGuessed.correct = newCorrect;
+            } else if (char.correctness === 1) {
+                const newPartial = [...newGuessed.partial, char.letter];
+                newGuessed.partial = newPartial;
+            } else {
+                const newIncorrect = [...newGuessed.incorrect, char.letter];
+                newGuessed.incorrect = newIncorrect;
+            }
+        }
+        setGuessedChars(newGuessed);
+    };
+
     const checkRow = (attempt) => {
         const checkedChars = attempt.map((c) => c.letter);
         const referenceWord = [...word];
@@ -91,7 +120,7 @@ export default function Home() {
         }
         for (let i = 0; i < attempt.length; i++) {
             const isPerfect = checkPerfectChar(attempt[i], referenceWord, i);
-            if (isPerfect) {
+            if (isPerfect === 2) {
                 checkedChars[i] = {
                     letter: attempt[i].letter,
                     correctness: isPerfect,
@@ -108,6 +137,7 @@ export default function Home() {
             }
         }
         setCurrentGuessNum((current) => current + 1);
+        addGuessedChars(checkedChars);
         return checkedChars;
     };
 
@@ -145,9 +175,10 @@ export default function Home() {
         return null;
     };
 
-    // console.log("word", word);
+    console.log("word", word);
     // console.log("currentGuessNumber", currentGuessNum);
-    console.log("previouswords", previousWords);
+    // console.log("previouswords", previousWords);
+    console.log("guessedChars", guessedChars);
 
     return (
         <main className="flex min-h-screen flex-col items-center pt-24">
@@ -166,7 +197,10 @@ export default function Home() {
                 checkRow={checkRow}
                 previousChars={previousChars}
             />
-            <ClickableKeyboard updateChars={updateChars} />
+            <ClickableKeyboard
+                updateChars={updateChars}
+                guessedChars={guessedChars}
+            />
         </main>
     );
 }

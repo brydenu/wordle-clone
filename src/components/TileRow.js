@@ -28,9 +28,9 @@ export default function TileRow({
                 if (updated) {
                     setSubmitted(updated);
                 }
-                if ([0, 1, 2].includes(updated[0].correctness)) {
-                    setIsSubmitting(true);
-                }
+                // if ([0, 1, 2].includes(updated[0].correctness)) {
+                //     setIsSubmitting(true);
+                // }
             }
         };
 
@@ -58,8 +58,8 @@ export default function TileRow({
     }, [previousChars]);
 
     // console.log("submitted", submitted);
-    console.log(`row ${rowNum} chars`, chars);
-    console.log(`row ${rowNum} submitted`, submitted);
+    // console.log(`row ${rowNum} chars`, chars);
+    // console.log(`row ${rowNum} submitted`, submitted);
     const tiles = Array.from({ length: wordLength }, (_, index) => (
         <Tile
             tileNum={index + 1}

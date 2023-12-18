@@ -10,7 +10,7 @@ export default function Tile({
     const [classes, setClasses] = useState(
         "border-[#D3D6DA] border-2 bg-white/0 text-black"
     );
-    console.log("tile in row", rowNum);
+    // console.log("tile in row", rowNum);
     useEffect(() => {
         if (char.correctness === 2) {
             // console.log("correctness correct");
@@ -21,7 +21,7 @@ export default function Tile({
             setClasses("bg-[#c9b458] text-white");
         } else if (char.correctness === 0) {
             // console.log("correctness incorrect");
-            setClasses("bg-gray-700 text-white");
+            setClasses("bg-[#787c7e] text-white");
         } else if (char.correctness === -1 || !char.correctness) {
             if (char.letter) {
                 setClasses("border-[#878a8c] border-2 bg-white/0 text-black");
